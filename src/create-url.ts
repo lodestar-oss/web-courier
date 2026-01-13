@@ -7,7 +7,7 @@ export function createURL(url: string | URL, base?: string | URL) {
     return urlObj;
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new InvalidURLError(`Failed to parse URL: ${url}`, {
+      throw new InvalidURLError(`Invalid URL: ${url}`, {
         inputs: { base, url },
         cause: error,
       });
