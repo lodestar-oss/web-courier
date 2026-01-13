@@ -24,7 +24,10 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
     }
 
     const fallbackError = createFallbackError({
-      context: { input, init },
+      context: {
+        inputs: { input, init },
+        operation: "webFetch",
+      },
       error,
     });
     throw fallbackError;
