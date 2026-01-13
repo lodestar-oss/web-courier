@@ -63,3 +63,19 @@ export class UnexpectedError extends Error {
     this.expected = false;
   }
 }
+
+export class InvalidJsonError extends Error {
+  code: "WEB_COURIER_INVALID_JSON_ERROR";
+  retriable: false;
+  rawText: string;
+  expected: true;
+
+  constructor({ rawText, cause }: { cause: SyntaxError; rawText: string }) {
+    super("Response body is not valid JSON", { cause });
+    this.name = "InvalidJsonError";
+    this.code = "WEB_COURIER_INVALID_JSON_ERROR";
+    this.retriable = false;
+    this.rawText = rawText;
+    this.expected = true;
+  }
+}
