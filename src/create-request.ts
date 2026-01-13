@@ -23,7 +23,7 @@ export function createRequest(input: RequestInfo | URL, init?: RequestInit) {
 
       // Call createURL for it to throw
       const url = createURL(input);
-      // If it didn't throw, then something is wrong
+      // If it didn't throw, then we fallback to unexpected error
       if (url) {
         throw fallbackError;
       }
