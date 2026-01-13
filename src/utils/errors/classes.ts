@@ -1,3 +1,28 @@
+export class NetworkError extends Error {
+  inputs: { input: RequestInfo | URL; init?: RequestInit };
+  code: "WEB_COURIER_NETWORK_ERROR";
+  retriable: true;
+  expected: true;
+
+  constructor(
+    message: string,
+    {
+      inputs,
+      cause,
+    }: {
+      inputs: { input: RequestInfo | URL; init?: RequestInit };
+      cause?: unknown;
+    }
+  ) {
+    super(message, { cause });
+    this.name = "NetworkError";
+    this.inputs = inputs;
+    this.code = "WEB_COURIER_NETWORK_ERROR";
+    this.retriable = true;
+    this.expected = true;
+  }
+}
+
 export class InvalidURLError extends Error {
   inputs: { base?: string | URL; url: string | URL };
   code: "WEB_COURIER_INVALID_URL_ERROR";

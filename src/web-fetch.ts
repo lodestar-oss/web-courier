@@ -1,4 +1,9 @@
-import { InvalidURLError, UnexpectedError } from "@/utils/errors/classes";
+import {
+  InvalidURLError,
+  UnexpectedError,
+  NetworkError,
+} from "@/utils/errors/classes";
+import { createFallbackError } from "@/utils/errors/fallback";
 import { createRequest } from "@/create-request";
 
 export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
@@ -10,6 +15,18 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
     if (error instanceof InvalidURLError || error instanceof UnexpectedError) {
       throw error;
     }
-    throw error;
+
+    if (error instanceof TypeError) {
+      throw new NetworkError("Network error", {
+        inputs: { input, init },
+        cause: error,
+      });
+    }
+
+    const fallbackError = createFallbackError({
+      context: { input, init },
+      error,
+    });
+    throw fallbackError;
   }
 }
