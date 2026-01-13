@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "check-types": "tsc --noEmit",
     "format": "bunx prettier . --write"
   },
   "devDependencies": {
