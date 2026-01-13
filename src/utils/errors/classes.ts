@@ -63,3 +63,35 @@ export class UnexpectedError extends Error {
     this.expected = false;
   }
 }
+
+export class InvalidJsonError extends Error {
+  code: "WEB_COURIER_INVALID_JSON_ERROR";
+  retriable: false;
+  rawText: string;
+  expected: true;
+
+  constructor({ rawText, cause }: { cause: SyntaxError; rawText: string }) {
+    super("Response body is not valid JSON", { cause });
+    this.name = "InvalidJsonError";
+    this.code = "WEB_COURIER_INVALID_JSON_ERROR";
+    this.retriable = false;
+    this.rawText = rawText;
+    this.expected = true;
+  }
+}
+
+export class ReadResponseError extends Error {
+  code: "WEB_COURIER_READ_RESPONSE_ERROR";
+  response: Response;
+  retriable: false;
+  expected: true;
+
+  constructor({ response }: { response: Response }) {
+    super("This response body stream has been locked or disturbed");
+    this.name = "ReadResponseError";
+    this.code = "WEB_COURIER_READ_RESPONSE_ERROR";
+    this.response = response;
+    this.retriable = false;
+    this.expected = true;
+  }
+}
