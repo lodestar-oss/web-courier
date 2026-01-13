@@ -6,11 +6,11 @@
       "name": "web-courier",
       "devDependencies": {
         "@types/bun": "latest",
-        "prettier": "3.7.4",
-        "prettier-plugin-curly": "0.4.1",
+        "prettier": "latest",
+        "prettier-plugin-curly": "latest",
       },
       "peerDependencies": {
-        "typescript": "^5",
+        "typescript": "latest",
       },
     },
   },
