@@ -1,5 +1,5 @@
 import { createFallbackError } from "@/utils/errors/fallback";
-import { ParseURLError } from "@/utils/errors/classes";
+import { InvalidURLError } from "@/utils/errors/classes";
 
 export function createURL(url: string, base?: string) {
   try {
@@ -7,7 +7,7 @@ export function createURL(url: string, base?: string) {
     return urlObj;
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new ParseURLError(`Failed to parse URL: ${url}`, {
+      throw new InvalidURLError(`Failed to parse URL: ${url}`, {
         inputs: { base, url },
         cause: error,
       });

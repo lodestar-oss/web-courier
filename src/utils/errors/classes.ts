@@ -1,6 +1,6 @@
-export class ParseURLError extends Error {
+export class InvalidURLError extends Error {
   inputs: { base?: string | URL; url: string | URL };
-  code: "WEB_COURIER_PARSE_URL_ERROR";
+  code: "WEB_COURIER_INVALID_URL_ERROR";
   retriable: false;
   expected: true;
 
@@ -12,8 +12,8 @@ export class ParseURLError extends Error {
     }: { inputs: { base?: string | URL; url: string | URL }; cause: TypeError }
   ) {
     super(message, { cause });
-    this.name = "ParseURLError";
-    this.code = "WEB_COURIER_PARSE_URL_ERROR";
+    this.name = "InvalidURLError";
+    this.code = "WEB_COURIER_INVALID_URL_ERROR";
     this.inputs = inputs;
     this.expected = true;
     this.retriable = false;
