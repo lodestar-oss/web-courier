@@ -1,7 +1,7 @@
 import { createFallbackError } from "@/utils/errors/fallback";
 import { InvalidURLError } from "@/utils/errors/classes";
 
-export function createURL(url: string, base?: string) {
+export function createURL(url: string | URL, base?: string | URL) {
   try {
     const urlObj = new URL(url, base);
     return urlObj;
