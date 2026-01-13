@@ -1,1 +1,2 @@
-console.log("Hello via Bun!");
+const url = new URL("userpassword");
+console.log(url);
