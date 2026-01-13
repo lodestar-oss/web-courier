@@ -1,2 +1,2 @@
-const url = new URL("userpassword");
-console.log(url);
+// @ts-expect-error - expected
+console.log(typeof Deno);
