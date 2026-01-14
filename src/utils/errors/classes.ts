@@ -18,24 +18,6 @@ export class ServerIsATeapotError extends Error {
   }
 }
 
-export class TooManyRequestsError extends Error {
-  code: "WEB_COURIER_TOO_MANY_REQUESTS_ERROR";
-  response: Response;
-  request: Request;
-  retriable: true;
-  expected: true;
-
-  constructor({ response, request }: { response: Response; request: Request }) {
-    super(`The resource at ${request.url} is unavailable due to rate limiting`);
-    this.name = "TooManyRequestsError";
-    this.code = "WEB_COURIER_TOO_MANY_REQUESTS_ERROR";
-    this.request = request;
-    this.response = response;
-    this.retriable = true;
-    this.expected = true;
-  }
-}
-
 export class NetworkError extends Error {
   inputs: { input: RequestInfo | URL; init?: RequestInit };
   code: "WEB_COURIER_NETWORK_ERROR";
@@ -83,6 +65,24 @@ export class InvalidURLError extends Error {
   }
 }
 
+export class TooManyRequestsError extends Error {
+  code: "WEB_COURIER_TOO_MANY_REQUESTS_ERROR";
+  response: Response;
+  request: Request;
+  retriable: true;
+  expected: true;
+
+  constructor({ response, request }: { response: Response; request: Request }) {
+    super(`[${response.status}] ${response.statusText}`);
+    this.name = "TooManyRequestsError";
+    this.code = "WEB_COURIER_TOO_MANY_REQUESTS_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = true;
+    this.expected = true;
+  }
+}
+
 export class UnauthorizedError extends Error {
   code: "WEB_COURIER_UNAUTHORIZED_ERROR";
   response: Response;
@@ -91,7 +91,7 @@ export class UnauthorizedError extends Error {
   expected: true;
 
   constructor({ response, request }: { response: Response; request: Request }) {
-    super(`The resource at ${request.url} requires authentication`);
+    super(`[${response.status}] ${response.statusText}`);
     this.name = "UnauthorizedError";
     this.code = "WEB_COURIER_UNAUTHORIZED_ERROR";
     this.request = request;
@@ -109,9 +109,27 @@ export class NotFoundError extends Error {
   expected: true;
 
   constructor({ response, request }: { response: Response; request: Request }) {
-    super(`The resource at ${request.url} was not found`);
+    super(`[${response.status}] ${response.statusText}`);
     this.name = "NotFoundError";
     this.code = "WEB_COURIER_NOT_FOUND_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = false;
+    this.expected = true;
+  }
+}
+
+export class ClientError extends Error {
+  code: "WEB_COURIER_CLIENT_ERROR";
+  response: Response;
+  request: Request;
+  retriable: false;
+  expected: true;
+
+  constructor({ response, request }: { response: Response; request: Request }) {
+    super(`[${response.status}] ${response.statusText}`);
+    this.name = "ClientError";
+    this.code = "WEB_COURIER_CLIENT_ERROR";
     this.request = request;
     this.response = response;
     this.retriable = false;
