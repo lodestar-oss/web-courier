@@ -45,6 +45,24 @@ export class InvalidURLError extends Error {
   }
 }
 
+export class UnauthorizedError extends Error {
+  code: "WEB_COURIER_UNAUTHORIZED_ERROR";
+  response: Response;
+  request: Request;
+  retriable: false;
+  expected: true;
+
+  constructor({ response, request }: { response: Response; request: Request }) {
+    super(`The resource at ${request.url} requires authentication`);
+    this.name = "UnauthorizedError";
+    this.code = "WEB_COURIER_UNAUTHORIZED_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = false;
+    this.expected = true;
+  }
+}
+
 export class NotFoundError extends Error {
   code: "WEB_COURIER_NOT_FOUND_ERROR";
   response: Response;
