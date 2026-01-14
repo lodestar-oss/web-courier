@@ -18,6 +18,32 @@ export class ServerIsATeapotError extends Error {
   }
 }
 
+export class ClientError extends Error {
+  code: "WEB_COURIER_CLIENT_ERROR";
+  response: Response;
+  retriable: boolean;
+  request: Request;
+  expected: true;
+
+  constructor({
+    retriable = false,
+    response,
+    request,
+  }: {
+    retriable?: boolean;
+    response: Response;
+    request: Request;
+  }) {
+    super(`[${response.status}] ${response.statusText}`);
+    this.name = "ClientError";
+    this.code = "WEB_COURIER_CLIENT_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = retriable;
+    this.expected = true;
+  }
+}
+
 export class NetworkError extends Error {
   inputs: { input: RequestInfo | URL; init?: RequestInit };
   code: "WEB_COURIER_NETWORK_ERROR";
@@ -112,24 +138,6 @@ export class NotFoundError extends Error {
     super(`[${response.status}] ${response.statusText}`);
     this.name = "NotFoundError";
     this.code = "WEB_COURIER_NOT_FOUND_ERROR";
-    this.request = request;
-    this.response = response;
-    this.retriable = false;
-    this.expected = true;
-  }
-}
-
-export class ClientError extends Error {
-  code: "WEB_COURIER_CLIENT_ERROR";
-  response: Response;
-  request: Request;
-  retriable: false;
-  expected: true;
-
-  constructor({ response, request }: { response: Response; request: Request }) {
-    super(`[${response.status}] ${response.statusText}`);
-    this.name = "ClientError";
-    this.code = "WEB_COURIER_CLIENT_ERROR";
     this.request = request;
     this.response = response;
     this.retriable = false;
