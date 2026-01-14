@@ -55,9 +55,14 @@ export async function getResponse({
 
       const fallbackError = new UnexpectedError("Unexpected HTTP status code", {
         context: {
-          inputs: { responseBodyFormat, requestInit, fetchInput },
+          inputs: {
+            url:
+              fetchInput instanceof Request
+                ? fetchInput.url
+                : fetchInput.toString(),
+          },
+          outputs: { statusText, status },
           operation: "getResponse",
-          outputs: { response },
         },
       });
       throw fallbackError;
@@ -78,7 +83,10 @@ export async function getResponse({
 
     const fallbackError = createFallbackError({
       context: {
-        inputs: { responseBodyFormat, requestInit, fetchInput },
+        url:
+          fetchInput instanceof Request
+            ? fetchInput.url
+            : fetchInput.toString(),
         operation: "getResponse",
       },
       error,
