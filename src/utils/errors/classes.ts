@@ -45,6 +45,24 @@ export class InvalidURLError extends Error {
   }
 }
 
+export class NotFoundError extends Error {
+  code: "WEB_COURIER_NOT_FOUND_ERROR";
+  response: Response;
+  request: Request;
+  retriable: false;
+  expected: true;
+
+  constructor({ response, request }: { response: Response; request: Request }) {
+    super(`The resource at ${request.url} was not found`);
+    this.name = "NotFoundError";
+    this.code = "WEB_COURIER_NOT_FOUND_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = false;
+    this.expected = true;
+  }
+}
+
 export class UnexpectedError extends Error {
   code: "WEB_COURIER_UNEXPECTED_ERROR";
   context?: Record<string, unknown>;
