@@ -1,8 +1,4 @@
-import {
-  InvalidURLError,
-  UnexpectedError,
-  NetworkError,
-} from "@/utils/errors/classes";
+import { WebCourierError, NetworkError } from "@/utils/errors/classes";
 import { createFallbackError } from "@/utils/errors/fallback";
 import { createRequest } from "@/create-request";
 
@@ -12,7 +8,7 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
     const response = await fetch(request);
     return response;
   } catch (error) {
-    if (error instanceof InvalidURLError || error instanceof UnexpectedError) {
+    if (error instanceof WebCourierError) {
       throw error;
     }
 

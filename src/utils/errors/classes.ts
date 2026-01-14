@@ -113,10 +113,6 @@ export class NotFoundError extends ClientError {
 
 export class ServerIsATeapotError extends ClientError {
   override code = "WEB_COURIER_SERVER_IS_A_TEAPOT_ERROR" as const;
-
-  constructor(statusText: string) {
-    super({ status: 418, statusText });
-  }
 }
 
 export class TooManyRequestsError extends ClientError {

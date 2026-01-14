@@ -14,7 +14,7 @@ export async function parseResponseBody({
   response: Response;
 }) {
   if (response.bodyUsed) {
-    throw new ReadResponseError({ response });
+    throw new ReadResponseError();
   }
 
   try {
