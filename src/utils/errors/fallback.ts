@@ -3,8 +3,8 @@ import { SUPPORTED_RUNTIMES } from "@/utils/constants";
 import { detectRuntime } from "@/utils/detect-runtime";
 
 export function createFallbackError({
+  context = {},
   message,
-  context,
   error,
 }: {
   context?: Record<string, unknown>;
@@ -12,29 +12,29 @@ export function createFallbackError({
   error: unknown;
 }): UnexpectedError {
   const runtime = detectRuntime();
-  const runtimeWarningMessage =
-    "An unexpected error occurred. This can happen because your runtime is not currently supported by web-courier. Please open an issue if you see this message.";
-  const shouldWarn = !SUPPORTED_RUNTIMES.includes(runtime);
+  const isSupported = SUPPORTED_RUNTIMES.includes(runtime);
 
-  const errorMessage =
-    message ?? (shouldWarn ? runtimeWarningMessage : undefined);
+  // Auto-inject runtime info into context for easier debugging
+  const finalContext = {
+    ...context,
+    isSupported,
+    runtime,
+  };
 
-  if (error instanceof Error) {
-    return new UnexpectedError(errorMessage ?? error.message, {
-      cause: error,
-      context,
-    });
+  let finalMessage = message;
+
+  if (!finalMessage) {
+    if (!isSupported) {
+      finalMessage = `An unexpected error occurred in an unsupported runtime (${runtime}). Please open an issue.`;
+    } else if (error instanceof Error) {
+      finalMessage = error.message;
+    } else {
+      finalMessage = String(error);
+    }
   }
 
-  try {
-    return new UnexpectedError(errorMessage ?? String(error), {
-      cause: error,
-      context,
-    });
-  } catch {
-    return new UnexpectedError(errorMessage ?? "Unknown error", {
-      cause: error,
-      context,
-    });
-  }
+  return new UnexpectedError(finalMessage, {
+    context: finalContext,
+    cause: error,
+  });
 }
