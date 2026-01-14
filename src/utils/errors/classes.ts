@@ -44,6 +44,32 @@ export class ClientError extends Error {
   }
 }
 
+export class ServerError extends Error {
+  code: "WEB_COURIER_SERVER_ERROR";
+  response: Response;
+  retriable: boolean;
+  request: Request;
+  expected: true;
+
+  constructor({
+    retriable = true,
+    response,
+    request,
+  }: {
+    retriable?: boolean;
+    response: Response;
+    request: Request;
+  }) {
+    super(`[${response.status}] ${response.statusText}`);
+    this.name = "ServerError";
+    this.code = "WEB_COURIER_SERVER_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = retriable;
+    this.expected = true;
+  }
+}
+
 export class NetworkError extends Error {
   inputs: { input: RequestInfo | URL; init?: RequestInit };
   code: "WEB_COURIER_NETWORK_ERROR";
