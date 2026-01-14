@@ -1,3 +1,75 @@
+export class ServerIsATeapotError extends Error {
+  code: "WEB_COURIER_SERVER_IS_A_TEAPOT_ERROR";
+  response: Response;
+  request: Request;
+  retriable: false;
+  expected: true;
+
+  constructor({ response, request }: { response: Response; request: Request }) {
+    super(
+      "The server refuses to brew coffee because it is, permanently, a teapot"
+    );
+    this.name = "ServerIsATeapotError";
+    this.code = "WEB_COURIER_SERVER_IS_A_TEAPOT_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = false;
+    this.expected = true;
+  }
+}
+
+export class ClientError extends Error {
+  code: "WEB_COURIER_CLIENT_ERROR";
+  response: Response;
+  retriable: boolean;
+  request: Request;
+  expected: true;
+
+  constructor({
+    retriable = false,
+    response,
+    request,
+  }: {
+    retriable?: boolean;
+    response: Response;
+    request: Request;
+  }) {
+    super(`[${response.status}] ${response.statusText}`);
+    this.name = "ClientError";
+    this.code = "WEB_COURIER_CLIENT_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = retriable;
+    this.expected = true;
+  }
+}
+
+export class ServerError extends Error {
+  code: "WEB_COURIER_SERVER_ERROR";
+  response: Response;
+  retriable: boolean;
+  request: Request;
+  expected: true;
+
+  constructor({
+    retriable = true,
+    response,
+    request,
+  }: {
+    retriable?: boolean;
+    response: Response;
+    request: Request;
+  }) {
+    super(`[${response.status}] ${response.statusText}`);
+    this.name = "ServerError";
+    this.code = "WEB_COURIER_SERVER_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = retriable;
+    this.expected = true;
+  }
+}
+
 export class NetworkError extends Error {
   inputs: { input: RequestInfo | URL; init?: RequestInit };
   code: "WEB_COURIER_NETWORK_ERROR";
@@ -42,6 +114,60 @@ export class InvalidURLError extends Error {
     this.inputs = inputs;
     this.expected = true;
     this.retriable = false;
+  }
+}
+
+export class TooManyRequestsError extends Error {
+  code: "WEB_COURIER_TOO_MANY_REQUESTS_ERROR";
+  response: Response;
+  request: Request;
+  retriable: true;
+  expected: true;
+
+  constructor({ response, request }: { response: Response; request: Request }) {
+    super(`[${response.status}] ${response.statusText}`);
+    this.name = "TooManyRequestsError";
+    this.code = "WEB_COURIER_TOO_MANY_REQUESTS_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = true;
+    this.expected = true;
+  }
+}
+
+export class UnauthorizedError extends Error {
+  code: "WEB_COURIER_UNAUTHORIZED_ERROR";
+  response: Response;
+  request: Request;
+  retriable: false;
+  expected: true;
+
+  constructor({ response, request }: { response: Response; request: Request }) {
+    super(`[${response.status}] ${response.statusText}`);
+    this.name = "UnauthorizedError";
+    this.code = "WEB_COURIER_UNAUTHORIZED_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = false;
+    this.expected = true;
+  }
+}
+
+export class NotFoundError extends Error {
+  code: "WEB_COURIER_NOT_FOUND_ERROR";
+  response: Response;
+  request: Request;
+  retriable: false;
+  expected: true;
+
+  constructor({ response, request }: { response: Response; request: Request }) {
+    super(`[${response.status}] ${response.statusText}`);
+    this.name = "NotFoundError";
+    this.code = "WEB_COURIER_NOT_FOUND_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = false;
+    this.expected = true;
   }
 }
 
