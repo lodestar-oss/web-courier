@@ -1,3 +1,21 @@
+export class TooManyRequestsError extends Error {
+  code: "WEB_COURIER_TOO_MANY_REQUESTS_ERROR";
+  response: Response;
+  request: Request;
+  retriable: true;
+  expected: true;
+
+  constructor({ response, request }: { response: Response; request: Request }) {
+    super(`The resource at ${request.url} is unavailable due to rate limiting`);
+    this.name = "TooManyRequestsError";
+    this.code = "WEB_COURIER_TOO_MANY_REQUESTS_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = true;
+    this.expected = true;
+  }
+}
+
 export class NetworkError extends Error {
   inputs: { input: RequestInfo | URL; init?: RequestInit };
   code: "WEB_COURIER_NETWORK_ERROR";
