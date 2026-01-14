@@ -1,3 +1,23 @@
+export class ServerIsATeapotError extends Error {
+  code: "WEB_COURIER_SERVER_IS_A_TEAPOT_ERROR";
+  response: Response;
+  request: Request;
+  retriable: false;
+  expected: true;
+
+  constructor({ response, request }: { response: Response; request: Request }) {
+    super(
+      "The server refuses to brew coffee because it is, permanently, a teapot"
+    );
+    this.name = "ServerIsATeapotError";
+    this.code = "WEB_COURIER_SERVER_IS_A_TEAPOT_ERROR";
+    this.request = request;
+    this.response = response;
+    this.retriable = false;
+    this.expected = true;
+  }
+}
+
 export class TooManyRequestsError extends Error {
   code: "WEB_COURIER_TOO_MANY_REQUESTS_ERROR";
   response: Response;
