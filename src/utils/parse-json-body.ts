@@ -11,7 +11,7 @@ export async function parseJsonBody(rawText: string) {
     }
 
     const fallbackError = createFallbackError({
-      context: { operation: "parseJsonBody", rawText },
+      context: { operation: "parseJsonBody" },
       error,
     });
     throw fallbackError;

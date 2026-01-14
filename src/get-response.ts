@@ -2,11 +2,9 @@ import {
   TooManyRequestsError,
   ServerIsATeapotError,
   UnauthorizedError,
-  InvalidJsonError,
-  InvalidURLError,
   UnexpectedError,
+  WebCourierError,
   NotFoundError,
-  NetworkError,
   ClientError,
   ServerError,
 } from "@/utils/errors/classes";
@@ -30,35 +28,41 @@ export async function getResponse({
 
     if (!response.ok) {
       const status = response.status;
+      const statusText = response.statusText;
       if (status === 401 || status === 403) {
-        throw new UnauthorizedError({ response, request });
+        throw new UnauthorizedError({ statusText, status });
       }
 
       if (status === 404) {
-        throw new NotFoundError({ response, request });
+        throw new NotFoundError({ statusText, status });
       }
 
       if (status === 418) {
-        throw new ServerIsATeapotError({ response, request });
+        throw new ServerIsATeapotError({ statusText, status });
       }
 
       if (status === 429) {
-        throw new TooManyRequestsError({ response, request });
+        throw new TooManyRequestsError({ statusText, status });
       }
 
       if (status >= 400 && status < 500) {
-        throw new ClientError({ response, request });
+        throw new ClientError({ statusText, status });
       }
 
       if (status >= 500) {
-        throw new ServerError({ response, request });
+        throw new ServerError({ statusText, status });
       }
 
       const fallbackError = new UnexpectedError("Unexpected HTTP status code", {
         context: {
-          inputs: { responseBodyFormat, requestInit, fetchInput },
+          inputs: {
+            url:
+              fetchInput instanceof Request
+                ? fetchInput.url
+                : fetchInput.toString(),
+          },
+          outputs: { statusText, status },
           operation: "getResponse",
-          outputs: { response },
         },
       });
       throw fallbackError;
@@ -73,24 +77,16 @@ export async function getResponse({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return body;
   } catch (error) {
-    if (
-      error instanceof NetworkError ||
-      error instanceof InvalidURLError ||
-      error instanceof InvalidJsonError ||
-      error instanceof ServerError ||
-      error instanceof ClientError ||
-      error instanceof ServerIsATeapotError ||
-      error instanceof TooManyRequestsError ||
-      error instanceof UnauthorizedError ||
-      error instanceof NotFoundError ||
-      error instanceof UnexpectedError
-    ) {
+    if (error instanceof WebCourierError) {
       throw error;
     }
 
     const fallbackError = createFallbackError({
       context: {
-        inputs: { responseBodyFormat, requestInit, fetchInput },
+        url:
+          fetchInput instanceof Request
+            ? fetchInput.url
+            : fetchInput.toString(),
         operation: "getResponse",
       },
       error,

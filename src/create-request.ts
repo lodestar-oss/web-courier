@@ -8,8 +8,8 @@ export function createRequest(input: RequestInfo | URL, init?: RequestInit) {
   } catch (error) {
     const fallbackError = createFallbackError({
       context: {
+        url: input instanceof Request ? input.url : input.toString(),
         operation: "createRequest",
-        inputs: { input, init },
       },
       error,
     });
@@ -21,9 +21,12 @@ export function createRequest(input: RequestInfo | URL, init?: RequestInit) {
         throw fallbackError;
       }
 
-      // Call createURL for it to throw
+      // It is likely that the input is not a valid url
+      // Call createURL to throw the InvalidURLError
       const url = createURL(input);
-      // If it didn't throw, then we fallback to unexpected error
+      // If it doesn't throw, then we fallback to unexpected error
+      // This case will happen in the browser environment if the url contains credentials
+      // However, currently, we don't support browser yet so we fallback to unexpected error
       if (url) {
         throw fallbackError;
       }

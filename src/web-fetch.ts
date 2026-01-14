@@ -1,9 +1,6 @@
-import {
-  InvalidURLError,
-  UnexpectedError,
-  NetworkError,
-} from "@/utils/errors/classes";
+import { WebCourierError, NetworkError } from "@/utils/errors/classes";
 import { createFallbackError } from "@/utils/errors/fallback";
+import { detectRuntime } from "@/utils/detect-runtime";
 import { createRequest } from "@/create-request";
 
 export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
@@ -12,20 +9,26 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
     const response = await fetch(request);
     return response;
   } catch (error) {
-    if (error instanceof InvalidURLError || error instanceof UnexpectedError) {
+    if (error instanceof WebCourierError) {
       throw error;
     }
 
     if (error instanceof TypeError) {
-      throw new NetworkError("Network error", {
-        inputs: { input, init },
-        cause: error,
-      });
+      const runtime = detectRuntime();
+
+      if (runtime === "bun" || runtime === "deno") {
+        // Only in Bun and Deno can we know for sure that TypeError means network error
+        // In other runtimes, TypeError could also be caused by invalid values in RequestInit options
+        throw new NetworkError("Network error", {
+          inputs: { input, init },
+          cause: error,
+        });
+      }
     }
 
     const fallbackError = createFallbackError({
       context: {
-        inputs: { input, init },
+        url: input instanceof Request ? input.url : input.toString(),
         operation: "webFetch",
       },
       error,

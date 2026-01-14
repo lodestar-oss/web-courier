@@ -1,8 +1,4 @@
-import {
-  ReadResponseError,
-  InvalidJsonError,
-  UnexpectedError,
-} from "@/utils/errors/classes";
+import { ReadResponseError, WebCourierError } from "@/utils/errors/classes";
 import { createFallbackError } from "@/utils/errors/fallback";
 import { parseJsonBody } from "@/utils/parse-json-body";
 
@@ -14,7 +10,7 @@ export async function parseResponseBody({
   response: Response;
 }) {
   if (response.bodyUsed) {
-    throw new ReadResponseError({ response });
+    throw new ReadResponseError();
   }
 
   try {
@@ -27,12 +23,12 @@ export async function parseResponseBody({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await parseJsonBody(rawText);
   } catch (error) {
-    if (error instanceof InvalidJsonError || error instanceof UnexpectedError) {
+    if (error instanceof WebCourierError) {
       throw error;
     }
 
     const fallbackError = createFallbackError({
-      context: { operation: "parseResponseBody", inputs: { response, format } },
+      context: { operation: "parseResponseBody", format },
       error,
     });
     throw fallbackError;
