@@ -8,8 +8,8 @@ export function createRequest(input: RequestInfo | URL, init?: RequestInit) {
   } catch (error) {
     const fallbackError = createFallbackError({
       context: {
+        url: input instanceof Request ? input.url : input.toString(),
         operation: "createRequest",
-        inputs: { input, init },
       },
       error,
     });
