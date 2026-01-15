@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { Server } from "bun";
 
 import { serveOptions, jsonContent, textContent, port } from "@tests/server";
 import { beforeAll, afterAll, describe, expect, test } from "bun:test";
 
+import { InvalidJsonError } from "@/utils/errors/classes";
 import { getResponse } from "@/get-response";
 
 let server: Server<undefined>;
@@ -28,6 +30,16 @@ describe("getResponse function", () => {
       responseBodyFormat: "json",
     });
     expect(content).toStrictEqual(jsonContent);
+  });
+
+  test("should throw InvalidJsonError for invalid JSON", () => {
+    expect(
+      async () =>
+        await getResponse({
+          fetchInput: `${baseUrl}/invalid-json`,
+          responseBodyFormat: "json",
+        })
+    ).toThrow(InvalidJsonError);
   });
 });
 
