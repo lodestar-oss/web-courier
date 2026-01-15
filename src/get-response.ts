@@ -55,7 +55,15 @@ export async function getResponse({
       }
 
       if (status >= 500) {
-        throw new ServerError({ statusText, status });
+        const isIdempotent = [
+          "OPTIONS",
+          "DELETE",
+          "TRACE",
+          "HEAD",
+          "GET",
+          "PUT",
+        ].includes(request.method);
+        throw new ServerError({ retriable: isIdempotent, statusText, status });
       }
 
       const fallbackError = new UnexpectedError("Unexpected HTTP status code", {

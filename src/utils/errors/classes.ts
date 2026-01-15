@@ -83,9 +83,13 @@ export class HttpError extends WebCourierError {
 export class ServerError extends HttpError {
   override code = "WEB_COURIER_SERVER_ERROR" as const;
 
-  constructor(opts: { statusText: string; status: number }) {
+  constructor(opts: {
+    retriable: boolean;
+    statusText: string;
+    status: number;
+  }) {
     // 5xx errors are retriable by default
-    super({ ...opts, retriable: true });
+    super(opts);
   }
 }
 
