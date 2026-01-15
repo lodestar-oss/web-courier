@@ -2,11 +2,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { Server } from "bun";
 
-import { serveOptions, jsonContent, textContent, port } from "@tests/server";
+import {
+  serveOptions,
+  jsonContent,
+  textContent,
+  retryAfter,
+  port,
+} from "@tests/server";
 import { beforeAll, afterAll, describe, expect, test } from "bun:test";
 
 import {
   ServerIsATeapotError,
+  TooManyRequestsError,
   UnauthorizedError,
   InvalidJsonError,
   NotFoundError,
@@ -70,6 +77,21 @@ describe("getResponse function", () => {
           fetchInput: `${baseUrl}/get-coffee`,
         })
     ).toThrow(ServerIsATeapotError);
+  });
+
+  test("should throw TooManyRequestsError for 429 status code", () => {
+    expect(
+      async () =>
+        await getResponse({
+          fetchInput: `${baseUrl}/rate-limited`,
+        })
+    ).toThrow(
+      new TooManyRequestsError({
+        statusText: "Too Many Requests",
+        retryAfter: retryAfter,
+        status: 429,
+      })
+    );
   });
 });
 
