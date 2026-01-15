@@ -10,7 +10,8 @@
     "format:check": "bunx prettier . --check",
     "check": "bun run check-types && bun run lint && bun run format:check",
     "fix": "bun run lint:fix && bun run format",
-    "test:get-response": "bun test tests/get-response.test.ts"
+    "test:get-response": "bun test tests/get-response.test.ts",
+    "test:abort": "bun test tests/abort.test.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
