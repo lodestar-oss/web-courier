@@ -14,7 +14,7 @@ import { createRequest } from "@/create-request";
 import { webFetch } from "@/web-fetch";
 
 export async function getResponse({
-  responseBodyFormat,
+  responseBodyFormat = "json",
   requestInit,
   fetchInput,
 }: {
