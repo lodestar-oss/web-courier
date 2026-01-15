@@ -1,4 +1,8 @@
-import { WebCourierError, NetworkError } from "@/utils/errors/classes";
+import {
+  WebCourierError,
+  NetworkError,
+  AbortError,
+} from "@/utils/errors/classes";
 import { createFallbackError } from "@/utils/errors/fallback";
 import { detectRuntime } from "@/utils/detect-runtime";
 import { createRequest } from "@/create-request";
@@ -11,6 +15,10 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
   } catch (error) {
     if (error instanceof WebCourierError) {
       throw error;
+    }
+
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new AbortError(error.message, { cause: error });
     }
 
     if (error instanceof TypeError) {

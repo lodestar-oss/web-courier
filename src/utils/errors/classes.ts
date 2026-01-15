@@ -187,3 +187,15 @@ export class UnexpectedError extends WebCourierError {
     this.context = context;
   }
 }
+
+// --- 5. Abort Errors ---
+
+export class AbortError extends WebCourierError {
+  code = "WEB_COURIER_ABORT_ERROR" as const;
+  retriable = false; // User cancelled, do not retry
+  expected = true;
+
+  constructor(message = "The request was aborted", options?: ErrorOptions) {
+    super(message, options);
+  }
+}

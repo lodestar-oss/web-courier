@@ -11,6 +11,10 @@ export const serveOptions: Serve.Options<undefined> = {
       headers: { "Retry-After": retryAfter.toString() },
       status: 429,
     }),
+    "/long-response": async () => {
+      await Bun.sleep(5000);
+      return new Response("Long Response", { status: 200 });
+    },
     "/server-error": new Response("Internal Server Error", { status: 500 }),
     "/unauthorized": new Response("Unauthorized", { status: 401 }),
     "/client-error": new Response("Bad Request", { status: 400 }),
