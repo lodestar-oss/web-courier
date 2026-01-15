@@ -11,6 +11,7 @@ export const serveOptions: Serve.Options<undefined> = {
       headers: { "Retry-After": retryAfter.toString() },
       status: 429,
     }),
+    "/server-error": new Response("Internal Server Error", { status: 500 }),
     "/unauthorized": new Response("Unauthorized", { status: 401 }),
     "/client-error": new Response("Bad Request", { status: 400 }),
     "/get-coffee": new Response("I'm a teapot", { status: 418 }),

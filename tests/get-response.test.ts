@@ -18,6 +18,7 @@ import {
   InvalidJsonError,
   NotFoundError,
   ClientError,
+  ServerError,
 } from "@/utils/errors/classes";
 import { getResponse } from "@/get-response";
 
@@ -102,6 +103,15 @@ describe("getResponse function", () => {
           fetchInput: `${baseUrl}/client-error`,
         })
     ).toThrow(ClientError);
+  });
+
+  test("should throw ServerError for 500 status code", () => {
+    expect(
+      async () =>
+        await getResponse({
+          fetchInput: `${baseUrl}/server-error`,
+        })
+    ).toThrow(ServerError);
   });
 });
 
