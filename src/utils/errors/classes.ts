@@ -81,7 +81,7 @@ export class HttpError extends WebCourierError {
 }
 
 export class ServerError extends HttpError {
-  override code = "WEB_COURIER_SERVER_ERROR" as const;
+  override code = "WEB_COURIER_SERVER_ERROR";
 
   constructor(opts: {
     retriable: boolean;
@@ -90,6 +90,21 @@ export class ServerError extends HttpError {
   }) {
     // 5xx errors are retriable by default
     super(opts);
+  }
+}
+
+export class ServiceUnavailableError extends ServerError {
+  override code = "WEB_COURIER_SERVICE_UNAVAILABLE_ERROR" as const;
+  retryAfter?: number; // In seconds, or undefined
+
+  constructor(opts: {
+    retryAfter?: number;
+    statusText: string;
+    status: number;
+  }) {
+    // 429 IS retriable
+    super({ ...opts, retriable: true });
+    this.retryAfter = opts.retryAfter;
   }
 }
 

@@ -1,4 +1,5 @@
 import {
+  ServiceUnavailableError,
   TooManyRequestsError,
   ServerIsATeapotError,
   UnauthorizedError,
@@ -44,6 +45,15 @@ export async function getResponse({
       if (status === 429) {
         const retryAfter = response.headers.get("Retry-After");
         throw new TooManyRequestsError({
+          retryAfter: retryAfter ? parseInt(retryAfter) : undefined,
+          statusText,
+          status,
+        });
+      }
+
+      if (status === 503) {
+        const retryAfter = response.headers.get("Retry-After");
+        throw new ServiceUnavailableError({
           retryAfter: retryAfter ? parseInt(retryAfter) : undefined,
           statusText,
           status,
