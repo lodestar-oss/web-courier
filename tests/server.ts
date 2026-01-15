@@ -12,6 +12,7 @@ export const serveOptions: Serve.Options<undefined> = {
       status: 429,
     }),
     "/unauthorized": new Response("Unauthorized", { status: 401 }),
+    "/client-error": new Response("Bad Request", { status: 400 }),
     "/get-coffee": new Response("I'm a teapot", { status: 418 }),
     "/invalid-json": new Response("{ not json:"),
     "/json": Response.json(jsonContent),

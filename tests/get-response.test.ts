@@ -17,6 +17,7 @@ import {
   UnauthorizedError,
   InvalidJsonError,
   NotFoundError,
+  ClientError,
 } from "@/utils/errors/classes";
 import { getResponse } from "@/get-response";
 
@@ -92,6 +93,15 @@ describe("getResponse function", () => {
         status: 429,
       })
     );
+  });
+
+  test("should throw ClientError for 400 status code", () => {
+    expect(
+      async () =>
+        await getResponse({
+          fetchInput: `${baseUrl}/client-error`,
+        })
+    ).toThrow(ClientError);
   });
 });
 
