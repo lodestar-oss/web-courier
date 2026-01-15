@@ -11,5 +11,8 @@ export const serveOptions: Serve.Options<undefined> = {
     "/json": Response.json(jsonContent),
     "/text": new Response(textContent),
   },
+  fetch() {
+    return new Response("Not Found", { status: 404 });
+  },
   port,
 };

@@ -5,7 +5,11 @@ import type { Server } from "bun";
 import { serveOptions, jsonContent, textContent, port } from "@tests/server";
 import { beforeAll, afterAll, describe, expect, test } from "bun:test";
 
-import { UnauthorizedError, InvalidJsonError } from "@/utils/errors/classes";
+import {
+  UnauthorizedError,
+  InvalidJsonError,
+  NotFoundError,
+} from "@/utils/errors/classes";
 import { getResponse } from "@/get-response";
 
 let server: Server<undefined>;
@@ -27,7 +31,6 @@ describe("getResponse function", () => {
   test("should return JSON response body", async () => {
     const content = await getResponse({
       fetchInput: `${baseUrl}/json`,
-      responseBodyFormat: "json",
     });
     expect(content).toStrictEqual(jsonContent);
   });
@@ -37,7 +40,6 @@ describe("getResponse function", () => {
       async () =>
         await getResponse({
           fetchInput: `${baseUrl}/invalid-json`,
-          responseBodyFormat: "json",
         })
     ).toThrow(InvalidJsonError);
   });
@@ -47,9 +49,17 @@ describe("getResponse function", () => {
       async () =>
         await getResponse({
           fetchInput: `${baseUrl}/unauthorized`,
-          responseBodyFormat: "json",
         })
     ).toThrow(UnauthorizedError);
+  });
+
+  test("should throw NotFoundError for not found response", () => {
+    expect(
+      async () =>
+        await getResponse({
+          fetchInput: `${baseUrl}/non-existent-route`,
+        })
+    ).toThrow(NotFoundError);
   });
 });
 
