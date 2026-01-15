@@ -45,7 +45,7 @@ describe("getResponse function", () => {
     ).toThrow(InvalidJsonError);
   });
 
-  test("should throw UnauthorizedError for unauthorized response", () => {
+  test("should throw UnauthorizedError for 401 status code", () => {
     expect(
       async () =>
         await getResponse({
@@ -54,7 +54,7 @@ describe("getResponse function", () => {
     ).toThrow(UnauthorizedError);
   });
 
-  test("should throw NotFoundError for not found response", () => {
+  test("should throw NotFoundError for 404 status code", () => {
     expect(
       async () =>
         await getResponse({
@@ -63,7 +63,7 @@ describe("getResponse function", () => {
     ).toThrow(NotFoundError);
   });
 
-  test("should throw ServerIsATeapotError for teapot response", () => {
+  test("should throw ServerIsATeapotError for 418 status code", () => {
     expect(
       async () =>
         await getResponse({
