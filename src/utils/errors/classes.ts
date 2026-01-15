@@ -195,7 +195,7 @@ export class AbortError extends WebCourierError {
   retriable = false; // User cancelled, do not retry
   expected = true;
 
-  constructor(message = "The request was aborted") {
-    super(message);
+  constructor(message = "The request was aborted", options?: ErrorOptions) {
+    super(message, options);
   }
 }
