@@ -6,6 +6,7 @@ import { serveOptions, jsonContent, textContent, port } from "@tests/server";
 import { beforeAll, afterAll, describe, expect, test } from "bun:test";
 
 import {
+  ServerIsATeapotError,
   UnauthorizedError,
   InvalidJsonError,
   NotFoundError,
@@ -60,6 +61,15 @@ describe("getResponse function", () => {
           fetchInput: `${baseUrl}/non-existent-route`,
         })
     ).toThrow(NotFoundError);
+  });
+
+  test("should throw ServerIsATeapotError for teapot response", () => {
+    expect(
+      async () =>
+        await getResponse({
+          fetchInput: `${baseUrl}/get-coffee`,
+        })
+    ).toThrow(ServerIsATeapotError);
   });
 });
 
