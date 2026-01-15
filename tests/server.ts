@@ -6,6 +6,7 @@ export const jsonContent = { message: "Hello there!" };
 
 export const serveOptions: Serve.Options<undefined> = {
   routes: {
+    "/unauthorized": new Response("Unauthorized", { status: 401 }),
     "/invalid-json": new Response("{ not json:"),
     "/json": Response.json(jsonContent),
     "/text": new Response(textContent),

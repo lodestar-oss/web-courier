@@ -5,7 +5,7 @@ import type { Server } from "bun";
 import { serveOptions, jsonContent, textContent, port } from "@tests/server";
 import { beforeAll, afterAll, describe, expect, test } from "bun:test";
 
-import { InvalidJsonError } from "@/utils/errors/classes";
+import { UnauthorizedError, InvalidJsonError } from "@/utils/errors/classes";
 import { getResponse } from "@/get-response";
 
 let server: Server<undefined>;
@@ -40,6 +40,16 @@ describe("getResponse function", () => {
           responseBodyFormat: "json",
         })
     ).toThrow(InvalidJsonError);
+  });
+
+  test("should throw UnauthorizedError for unauthorized response", () => {
+    expect(
+      async () =>
+        await getResponse({
+          fetchInput: `${baseUrl}/unauthorized`,
+          responseBodyFormat: "json",
+        })
+    ).toThrow(UnauthorizedError);
   });
 });
 
