@@ -14,7 +14,7 @@ import { createRequest } from "@/create-request";
 import { webFetch } from "@/web-fetch";
 
 export async function getResponse({
-  responseBodyFormat,
+  responseBodyFormat = "json",
   requestInit,
   fetchInput,
 }: {
@@ -42,7 +42,12 @@ export async function getResponse({
       }
 
       if (status === 429) {
-        throw new TooManyRequestsError({ statusText, status });
+        const retryAfter = response.headers.get("Retry-After");
+        throw new TooManyRequestsError({
+          retryAfter: retryAfter ? parseInt(retryAfter) : undefined,
+          statusText,
+          status,
+        });
       }
 
       if (status >= 400 && status < 500) {
