@@ -11,7 +11,6 @@ import {
 } from "@/utils/errors/classes";
 import { createFallbackError } from "@/utils/errors/fallback";
 import { parseResponseBody } from "@/parse-response-body";
-import { createRequest } from "@/create-request";
 import { webFetch } from "@/web-fetch";
 
 export async function getResponse({
@@ -24,8 +23,7 @@ export async function getResponse({
   requestInit?: RequestInit;
 }) {
   try {
-    const request = createRequest(fetchInput, requestInit);
-    const response = await webFetch(request);
+    const response = await webFetch(fetchInput, requestInit);
 
     if (!response.ok) {
       const status = response.status;
@@ -72,7 +70,7 @@ export async function getResponse({
           "HEAD",
           "GET",
           "PUT",
-        ].includes(request.method);
+        ].includes(requestInit?.method ?? "GET");
         throw new ServerError({ retriable: isIdempotent, statusText, status });
       }
 
