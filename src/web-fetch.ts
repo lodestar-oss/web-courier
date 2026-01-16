@@ -1,23 +1,14 @@
-import {
-  WebCourierError,
-  NetworkError,
-  TimeoutError,
-  AbortError,
-} from "@/utils/errors/classes";
+import { NetworkError, TimeoutError, AbortError } from "@/utils/errors/classes";
 import { createFallbackError } from "@/utils/errors/fallback";
 import { detectRuntime } from "@/utils/detect-runtime";
 import { createRequest } from "@/create-request";
 
 export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
+  const request = createRequest(input, init);
   try {
-    const request = createRequest(input, init);
     const response = await fetch(request);
     return response;
   } catch (error) {
-    if (error instanceof WebCourierError) {
-      throw error;
-    }
-
     if (error instanceof TypeError) {
       const runtime = detectRuntime();
 
@@ -40,9 +31,9 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
       }
     }
 
-    if (init?.signal?.aborted) {
+    if (request.signal?.aborted) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const abortReason = init.signal.reason;
+      const abortReason = request.signal.reason;
       throw new AbortError(
         typeof abortReason === "string" ? abortReason : "Request was aborted",
         { cause: error }
@@ -51,8 +42,8 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
 
     const fallbackError = createFallbackError({
       context: {
-        url: input instanceof Request ? input.url : input.toString(),
         operation: "webFetch",
+        url: request.url,
       },
       error,
     });
