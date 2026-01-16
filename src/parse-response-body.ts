@@ -9,10 +9,6 @@ export async function parseResponseBody({
   format?: "json" | "text";
   response: Response;
 }) {
-  if (response.bodyUsed) {
-    throw new ReadResponseError();
-  }
-
   try {
     const rawText = await response.text();
 
@@ -25,6 +21,10 @@ export async function parseResponseBody({
   } catch (error) {
     if (error instanceof WebCourierError) {
       throw error;
+    }
+
+    if (error instanceof TypeError && response.bodyUsed) {
+      throw new ReadResponseError({ cause: error });
     }
 
     const fallbackError = createFallbackError({

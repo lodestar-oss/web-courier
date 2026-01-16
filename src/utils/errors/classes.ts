@@ -168,8 +168,8 @@ export class ReadResponseError extends WebCourierError {
   retriable = false;
   expected = true;
 
-  constructor() {
-    super("The response body stream has been locked or disturbed");
+  constructor({ cause }: { cause: TypeError }) {
+    super("The response body stream has been locked or disturbed", { cause });
   }
 }
 
