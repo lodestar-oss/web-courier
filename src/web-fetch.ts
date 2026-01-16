@@ -22,6 +22,7 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
       }
     }
 
+    // This checks for native abort/timeout errors
     if (error instanceof Error) {
       if (error.name === "AbortError") {
         throw new AbortError(error.message, { cause: error });
@@ -31,13 +32,19 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
       }
     }
 
+    // This checks for custom abort reasons like `controller.abort(new Error('Custom reason'))`
     if (request.signal?.aborted) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const abortReason = request.signal.reason;
-      throw new AbortError(
-        typeof abortReason === "string" ? abortReason : "Request was aborted",
-        { cause: error }
-      );
+      const reason = request.signal.reason;
+      let message = "Request was aborted";
+
+      if (typeof reason === "string") {
+        message = reason;
+      } else if (reason instanceof Error) {
+        message = reason.message;
+      }
+
+      throw new AbortError(message, { cause: error });
     }
 
     const fallbackError = createFallbackError({
