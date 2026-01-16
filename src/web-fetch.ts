@@ -1,6 +1,7 @@
 import {
   WebCourierError,
   NetworkError,
+  TimeoutError,
   AbortError,
 } from "@/utils/errors/classes";
 import { createFallbackError } from "@/utils/errors/fallback";
@@ -17,10 +18,6 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
       throw error;
     }
 
-    if (error instanceof Error && error.name === "AbortError") {
-      throw new AbortError(error.message, { cause: error });
-    }
-
     if (error instanceof TypeError) {
       const runtime = detectRuntime();
 
@@ -32,6 +29,24 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
           cause: error,
         });
       }
+    }
+
+    if (error instanceof Error) {
+      if (error.name === "AbortError") {
+        throw new AbortError(error.message, { cause: error });
+      }
+      if (error.name === "TimeoutError") {
+        throw new TimeoutError(error.message, { cause: error });
+      }
+    }
+
+    if (init?.signal?.aborted) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const abortReason = init.signal.reason;
+      throw new AbortError(
+        typeof abortReason === "string" ? abortReason : "Request was aborted",
+        { cause: error }
+      );
     }
 
     const fallbackError = createFallbackError({
