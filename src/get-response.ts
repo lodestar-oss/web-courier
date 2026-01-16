@@ -60,6 +60,13 @@ export async function getResponse({
     }
 
     if (status >= 500) {
+      let method = "GET";
+      if (fetchInput instanceof Request) {
+        method = fetchInput.method;
+      }
+      if (requestInit?.method) {
+        method = requestInit.method;
+      }
       const isIdempotent = [
         "OPTIONS",
         "DELETE",
@@ -67,7 +74,7 @@ export async function getResponse({
         "HEAD",
         "GET",
         "PUT",
-      ].includes(requestInit?.method ?? "GET");
+      ].includes(method);
       throw new ServerError({ retriable: isIdempotent, statusText, status });
     }
 
