@@ -199,3 +199,15 @@ export class AbortError extends WebCourierError {
     super(message, options);
   }
 }
+
+// --- 6. Timeout Errors ---
+
+export class TimeoutError extends WebCourierError {
+  code = "WEB_COURIER_TIMEOUT_ERROR" as const;
+  retriable = true;
+  expected = true;
+
+  constructor(message = "The request timed out", options?: ErrorOptions) {
+    super(message, options);
+  }
+}
