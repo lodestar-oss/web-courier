@@ -21,7 +21,7 @@ export async function parseResponseBody({
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return await parseJsonBody(rawText);
+    return parseJsonBody(rawText);
   } catch (error) {
     if (error instanceof WebCourierError) {
       throw error;
