@@ -3,6 +3,8 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "try": "bun run tests/try.ts",
+    "serve": "bun run tests/serve.ts",
     "check-types": "bunx tsc --noEmit",
     "lint": "bunx eslint --cache",
     "lint:fix": "bunx eslint --cache --fix",
