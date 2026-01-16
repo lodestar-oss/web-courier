@@ -18,15 +18,6 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
       throw error;
     }
 
-    if (error instanceof Error) {
-      if (error.name === "AbortError") {
-        throw new AbortError(error.message, { cause: error });
-      }
-      if (error.name === "TimeoutError") {
-        throw new TimeoutError(error.message, { cause: error });
-      }
-    }
-
     if (error instanceof TypeError) {
       const runtime = detectRuntime();
 
@@ -37,6 +28,15 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
           inputs: { input, init },
           cause: error,
         });
+      }
+    }
+
+    if (error instanceof Error) {
+      if (error.name === "AbortError") {
+        throw new AbortError(error.message, { cause: error });
+      }
+      if (error.name === "TimeoutError") {
+        throw new TimeoutError(error.message, { cause: error });
       }
     }
 
