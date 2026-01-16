@@ -64,10 +64,10 @@ export async function getResponse({
     if (status >= 500) {
       let method = "GET";
       if (fetchInput instanceof Request) {
-        method = fetchInput.method;
+        method = fetchInput.method.toUpperCase();
       }
       if (requestInit?.method) {
-        method = requestInit.method;
+        method = requestInit.method.toUpperCase();
       }
       const isIdempotent = [
         "OPTIONS",
