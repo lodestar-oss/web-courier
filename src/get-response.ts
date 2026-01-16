@@ -39,8 +39,9 @@ export async function getResponse({
 
     if (status === 429) {
       const retryAfter = response.headers.get("Retry-After");
+      const parsedRetry = retryAfter ? parseInt(retryAfter) : NaN;
       throw new TooManyRequestsError({
-        retryAfter: retryAfter ? parseInt(retryAfter) : undefined,
+        retryAfter: Number.isNaN(parsedRetry) ? undefined : parsedRetry,
         statusText,
         status,
       });
@@ -48,8 +49,9 @@ export async function getResponse({
 
     if (status === 503) {
       const retryAfter = response.headers.get("Retry-After");
+      const parsedRetry = retryAfter ? parseInt(retryAfter) : NaN;
       throw new ServiceUnavailableError({
-        retryAfter: retryAfter ? parseInt(retryAfter) : undefined,
+        retryAfter: Number.isNaN(parsedRetry) ? undefined : parsedRetry,
         statusText,
         status,
       });
