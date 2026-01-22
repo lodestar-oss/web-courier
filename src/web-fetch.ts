@@ -1,7 +1,25 @@
+import type { Result } from "@/types/result";
+
 import { WebCourierError } from "@/utils/errors/classes";
 import { createRequest } from "@/create-request";
 
-export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
+export async function webFetch(
+  input: RequestInfo | URL,
+  init?: RequestInit
+): Promise<
+  Result<
+    Response,
+    WebCourierError<
+      | "INVALID_REQUEST_INIT_OPTIONS"
+      | "REQUEST_URL_HAS_CREDENTIALS"
+      | "NETWORK_ERROR"
+      | "INVALID_URL"
+      | "ABORTED"
+      | "TIMEOUT"
+      | "UNKNOWN"
+    >
+  >
+> {
   const createRequestResult = createRequest(input, init);
   if (!createRequestResult.success) {
     return createRequestResult;
