@@ -5,7 +5,7 @@ import { WebCourierError } from "@/utils/errors/classes";
 export function createURL(
   url: string | URL,
   base?: string | URL
-): Result<URL, WebCourierError> {
+): Result<URL, WebCourierError<"INVALID_URL" | "UNKNOWN">> {
   try {
     const urlObj = new URL(url, base);
     return { success: true, data: urlObj };

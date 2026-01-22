@@ -7,7 +7,15 @@ import { createURL } from "@/create-url";
 export function createRequest(
   input: RequestInfo | URL,
   init?: RequestInit
-): Result<Request, WebCourierError> {
+): Result<
+  Request,
+  WebCourierError<
+    | "INVALID_REQUEST_INIT_OPTIONS"
+    | "REQUEST_URL_HAS_CREDENTIALS"
+    | "INVALID_URL"
+    | "UNKNOWN"
+  >
+> {
   try {
     if (input instanceof Request) {
       const request = new Request(input, init);

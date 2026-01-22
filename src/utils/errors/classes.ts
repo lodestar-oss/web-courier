@@ -4,13 +4,15 @@ export type WebCourierErrorCode =
   | "INVALID_URL"
   | "UNKNOWN";
 
-export interface WebCourierErrorOptions extends ErrorOptions {
-  code: WebCourierErrorCode;
+export interface WebCourierErrorOptions<
+  TCode extends WebCourierErrorCode,
+> extends ErrorOptions {
+  code: TCode;
 }
 
-export class WebCourierError extends Error {
-  code: WebCourierErrorCode;
-  constructor(message: string, options: WebCourierErrorOptions) {
+export class WebCourierError<TCode extends WebCourierErrorCode> extends Error {
+  code: TCode;
+  constructor(message: string, options: WebCourierErrorOptions<TCode>) {
     super(message, { cause: options.cause });
     this.code = options.code;
   }
