@@ -20,6 +20,42 @@ export async function webFetch(input: RequestInfo | URL, init?: RequestInit) {
       return { error: networkError, success: false };
     }
 
+    if (error instanceof DOMException) {
+      if (error.name === "AbortError") {
+        const abortError = new WebCourierError("Request aborted", {
+          code: "ABORTED",
+          cause: error,
+        });
+        return { error: abortError, success: false };
+      }
+      if (error.name === "TimeoutError") {
+        const timeoutError = new WebCourierError("Request timeout", {
+          code: "TIMEOUT",
+          cause: error,
+        });
+        return { error: timeoutError, success: false };
+      }
+    }
+
+    // This checks for custom abort reasons like `controller.abort(new Error('Custom reason'))`
+    if (request.signal.aborted) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const reason = request.signal.reason;
+      let message = "Request aborted";
+
+      if (typeof reason === "string") {
+        message = reason;
+      } else if (reason instanceof Error) {
+        message = reason.message;
+      }
+
+      const abortError = new WebCourierError(message, {
+        code: "ABORTED",
+        cause: reason,
+      });
+      return { error: abortError, success: false };
+    }
+
     const unknownError = new WebCourierError("Unknown error", {
       code: "UNKNOWN",
       cause: error,

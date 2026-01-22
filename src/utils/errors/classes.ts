@@ -3,6 +3,8 @@ export type WebCourierErrorCode =
   | "REQUEST_URL_HAS_CREDENTIALS"
   | "NETWORK_ERROR"
   | "INVALID_URL"
+  | "ABORTED"
+  | "TIMEOUT"
   | "UNKNOWN";
 
 export interface WebCourierErrorOptions<
