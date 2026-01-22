@@ -1,25 +1,22 @@
-import { createFallbackError } from "@/utils/errors/fallback";
-import { InvalidURLError } from "@/utils/errors/classes";
+import { WebCourierError } from "@/utils/errors/classes";
 
 export function createURL(url: string | URL, base?: string | URL) {
   try {
     const urlObj = new URL(url, base);
-    return urlObj;
+    return { success: true, url: urlObj };
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new InvalidURLError(`Invalid URL: ${url}`, {
-        inputs: { base, url },
+      const invalidURLError = new WebCourierError("Invalid URL", {
+        code: "INVALID_URL",
         cause: error,
       });
+      return { error: invalidURLError, success: false };
     }
 
-    const fallbackError = createFallbackError({
-      context: {
-        operation: "createURL",
-        inputs: { base, url },
-      },
-      error,
+    const unknownError = new WebCourierError("Unknown error", {
+      code: "UNKNOWN",
+      cause: error,
     });
-    throw fallbackError;
+    return { error: unknownError, success: false };
   }
 }

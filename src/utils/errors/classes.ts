@@ -2,7 +2,7 @@ export interface WebCourierErrorOptions extends ErrorOptions {
   code: WebCourierErrorCode;
 }
 
-export type WebCourierErrorCode = "INVALID_URL";
+export type WebCourierErrorCode = "INVALID_URL" | "UNKNOWN";
 
 export class WebCourierError extends Error {
   code: WebCourierErrorCode;
