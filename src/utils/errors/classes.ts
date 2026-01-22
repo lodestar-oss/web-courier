@@ -1,6 +1,7 @@
 export type WebCourierErrorCode =
   | "INVALID_REQUEST_INIT_OPTIONS"
   | "REQUEST_URL_HAS_CREDENTIALS"
+  | "NETWORK_ERROR"
   | "INVALID_URL"
   | "UNKNOWN";
 
