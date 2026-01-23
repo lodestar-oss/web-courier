@@ -2,14 +2,14 @@ import type { Result } from "@/types/result";
 
 import { WebCourierError } from "@/utils/errors/classes";
 
+export type BlobParserResult = Result<
+  Blob,
+  WebCourierError<"BODY_STREAM_WAS_READ" | "DECODING_ERROR" | "UNKNOWN">
+>;
+
 export async function blobParser(
   response: Response
-): Promise<
-  Result<
-    Blob,
-    WebCourierError<"BODY_STREAM_WAS_READ" | "DECODING_ERROR" | "UNKNOWN">
-  >
-> {
+): Promise<BlobParserResult> {
   if (response.bodyUsed) {
     const typeError = new TypeError(
       "Failed to execute 'blob' on 'Response': body stream already read"

@@ -1,36 +1,44 @@
-import { ReadResponseError, WebCourierError } from "@/utils/errors/classes";
-import { createFallbackError } from "@/utils/errors/fallback";
-import { parseJsonBody } from "@/utils/parse-json-body";
+import {
+  type JSONParserResult,
+  jsonParser,
+} from "@/utils/response-parsers/json";
+import {
+  type BlobParserResult,
+  blobParser,
+} from "@/utils/response-parsers/blob";
 
+export function parseResponseBody(args: {
+  format?: undefined;
+  response: Response;
+}): Promise<JSONParserResult>;
+
+export function parseResponseBody(args: {
+  response: Response;
+  format: "json";
+}): Promise<JSONParserResult>;
+
+export function parseResponseBody(args: {
+  response: Response;
+  format: "blob";
+}): Promise<BlobParserResult>;
+
+// eslint-disable-next-line perfectionist/sort-modules
 export async function parseResponseBody({
   format = "json",
   response,
 }: {
-  format?: "json" | "text";
+  format?: "json" | "blob";
   response: Response;
-}) {
-  try {
-    const rawText = await response.text();
-
-    if (format === "text") {
-      return rawText;
+}): Promise<JSONParserResult | BlobParserResult> {
+  switch (format) {
+    case "json": {
+      return await jsonParser(response);
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return parseJsonBody(rawText);
-  } catch (error) {
-    if (error instanceof WebCourierError) {
-      throw error;
+    case "blob": {
+      return await blobParser(response);
     }
-
-    if (error instanceof TypeError && response.bodyUsed) {
-      throw new ReadResponseError({ cause: error });
+    default: {
+      return await jsonParser(response);
     }
-
-    const fallbackError = createFallbackError({
-      context: { operation: "parseResponseBody", format },
-      error,
-    });
-    throw fallbackError;
   }
 }
