@@ -1,106 +1,42 @@
-import {
-  ServiceUnavailableError,
-  TooManyRequestsError,
-  ServerIsATeapotError,
-  UnauthorizedError,
-  UnexpectedError,
-  NotFoundError,
-  ClientError,
-  ServerError,
-} from "@/utils/errors/classes";
+import { WebCourierHTTPError } from "@/utils/errors/classes";
 import { parseResponseBody } from "@/parse-response-body";
+import { createRequest } from "@/create-request";
 import { webFetch } from "@/web-fetch";
 
 export async function getResponse({
-  responseBodyFormat = "json",
-  requestInit,
-  fetchInput,
+  format,
+  input,
+  init,
 }: {
-  responseBodyFormat?: "json" | "text";
-  fetchInput: RequestInfo | URL;
-  requestInit?: RequestInit;
+  format?: "json" | "blob";
+  input: RequestInfo | URL;
+  init?: RequestInit;
 }) {
-  const response = await webFetch(fetchInput, requestInit);
+  const createRequestResult = createRequest(input, init);
+  if (!createRequestResult.success) {
+    return createRequestResult;
+  }
+  const request = createRequestResult.data;
+
+  const fetchResult = await webFetch(request);
+  if (!fetchResult.success) {
+    return fetchResult;
+  }
+  const response = fetchResult.data;
 
   if (!response.ok) {
-    const status = response.status;
-    const statusText = response.statusText;
-    if (status === 401 || status === 403) {
-      throw new UnauthorizedError({ statusText, status });
-    }
-
-    if (status === 404) {
-      throw new NotFoundError({ statusText, status });
-    }
-
-    if (status === 418) {
-      throw new ServerIsATeapotError({ statusText, status });
-    }
-
-    if (status === 429) {
-      const retryAfter = response.headers.get("Retry-After");
-      const parsedRetry = retryAfter ? parseInt(retryAfter) : NaN;
-      throw new TooManyRequestsError({
-        retryAfter: Number.isNaN(parsedRetry) ? undefined : parsedRetry,
-        statusText,
-        status,
-      });
-    }
-
-    if (status === 503) {
-      const retryAfter = response.headers.get("Retry-After");
-      const parsedRetry = retryAfter ? parseInt(retryAfter) : NaN;
-      throw new ServiceUnavailableError({
-        retryAfter: Number.isNaN(parsedRetry) ? undefined : parsedRetry,
-        statusText,
-        status,
-      });
-    }
-
-    if (status >= 400 && status < 500) {
-      throw new ClientError({ statusText, status });
-    }
-
-    if (status >= 500) {
-      let method = "GET";
-      if (fetchInput instanceof Request) {
-        method = fetchInput.method.toUpperCase();
-      }
-      if (requestInit?.method) {
-        method = requestInit.method.toUpperCase();
-      }
-      const isIdempotent = [
-        "OPTIONS",
-        "DELETE",
-        "TRACE",
-        "HEAD",
-        "GET",
-        "PUT",
-      ].includes(method);
-      throw new ServerError({ retriable: isIdempotent, statusText, status });
-    }
-
-    const fallbackError = new UnexpectedError("Unexpected HTTP status code", {
-      context: {
-        inputs: {
-          url:
-            fetchInput instanceof Request
-              ? fetchInput.url
-              : fetchInput.toString(),
-        },
-        outputs: { statusText, status },
-        operation: "getResponse",
-      },
+    const httpError = new WebCourierHTTPError({
+      statusText: response.statusText,
+      status: response.status,
+      method: request.method,
+      code: "HTTP_ERROR",
+      url: request.url,
     });
-    throw fallbackError;
+    return { error: httpError, success: false };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const body = await parseResponseBody({
-    format: responseBodyFormat,
+  return await parseResponseBody({
     response,
+    format,
   });
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return body;
 }

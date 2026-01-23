@@ -15,6 +15,8 @@ export interface WebCourierHTTPErrorOptions extends WebCourierErrorOptions<"HTTP
   code: "HTTP_ERROR";
   statusText: string;
   status: number;
+  method: string;
+  url: string;
 }
 
 export interface WebCourierErrorOptions<
@@ -35,10 +37,24 @@ export class WebCourierError<TCode extends WebCourierErrorCode> extends Error {
 export class WebCourierHTTPError extends WebCourierError<"HTTP_ERROR"> {
   statusText: string;
   status: number;
+  method: string;
+  url: string;
 
-  constructor(message: string, options: WebCourierHTTPErrorOptions) {
-    super(message, options);
-    this.statusText = options.statusText;
-    this.status = options.status;
+  constructor({
+    statusText,
+    method,
+    status,
+    cause,
+    code,
+    url,
+  }: WebCourierHTTPErrorOptions) {
+    super(`HTTP Error: [${method}] "${url}": ${status} ${statusText}`, {
+      cause,
+      code,
+    });
+    this.statusText = statusText;
+    this.status = status;
+    this.method = method;
+    this.url = url;
   }
 }

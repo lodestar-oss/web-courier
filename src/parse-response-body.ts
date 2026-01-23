@@ -7,22 +7,6 @@ import {
   blobParser,
 } from "@/utils/response-parsers/blob";
 
-export function parseResponseBody(args: {
-  format?: undefined;
-  response: Response;
-}): Promise<JSONParserResult>;
-
-export function parseResponseBody(args: {
-  response: Response;
-  format: "json";
-}): Promise<JSONParserResult>;
-
-export function parseResponseBody(args: {
-  response: Response;
-  format: "blob";
-}): Promise<BlobParserResult>;
-
-// eslint-disable-next-line perfectionist/sort-modules
 export async function parseResponseBody({
   format = "json",
   response,
