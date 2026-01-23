@@ -1,6 +1,8 @@
-import type { URLString } from "@/types";
+import type { Branded } from "@/types/brand";
 
 import { createURL } from "@/create-url";
+
+type URLString = Branded<string, "URLString">;
 
 export function isUrlString(value: string): value is URLString {
   try {
