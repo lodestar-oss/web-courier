@@ -6,7 +6,7 @@ type URLString = Branded<string, "URLString">;
 
 export function isUrlString(value: string): value is URLString {
   try {
-    createURL(value);
+    createURL({ url: value });
     return true;
   } catch {
     return false;
@@ -14,5 +14,5 @@ export function isUrlString(value: string): value is URLString {
 }
 
 export function assertUrlString(value: string): asserts value is URLString {
-  createURL(value);
+  createURL({ url: value });
 }
