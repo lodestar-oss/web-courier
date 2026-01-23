@@ -1,11 +1,8 @@
-import {
-  type JSONParserResult,
-  jsonParser,
-} from "@/utils/response-parsers/json";
-import {
-  type BlobParserResult,
-  blobParser,
-} from "@/utils/response-parsers/blob";
+import type { ParserErrorCode, WebCourierError } from "@/utils/errors/classes";
+import type { Result } from "@/types/result";
+
+import { jsonParser } from "@/utils/response-parsers/json";
+import { blobParser } from "@/utils/response-parsers/blob";
 
 export async function parseResponseBody({
   format = "json",
@@ -13,7 +10,13 @@ export async function parseResponseBody({
 }: {
   format?: "json" | "blob";
   response: Response;
-}): Promise<JSONParserResult | BlobParserResult> {
+}): Promise<
+  Result<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any,
+    WebCourierError<ParserErrorCode | "INVALID_JSON" | "UNKNOWN">
+  >
+> {
   switch (format) {
     case "json": {
       return await jsonParser(response);

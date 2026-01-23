@@ -1,8 +1,7 @@
 export type WebCourierErrorCode =
   | "INVALID_REQUEST_INIT_OPTIONS"
   | "REQUEST_URL_HAS_CREDENTIALS"
-  | "BODY_STREAM_WAS_READ"
-  | "DECODING_ERROR"
+  | ParserErrorCode
   | "NETWORK_ERROR"
   | "INVALID_JSON"
   | "INVALID_URL"
@@ -24,6 +23,8 @@ export interface WebCourierErrorOptions<
 > extends ErrorOptions {
   code: TCode;
 }
+
+export type ParserErrorCode = "BODY_STREAM_WAS_READ" | "DECODING_ERROR";
 
 export class WebCourierError<TCode extends WebCourierErrorCode> extends Error {
   code: TCode;

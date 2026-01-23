@@ -2,19 +2,15 @@
 
 import type { Result } from "@/types/result";
 
-import { WebCourierError } from "@/utils/errors/classes";
+import { type ParserErrorCode, WebCourierError } from "@/utils/errors/classes";
 
-export type JSONParserResult = Result<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  any,
-  WebCourierError<
-    "BODY_STREAM_WAS_READ" | "DECODING_ERROR" | "INVALID_JSON" | "UNKNOWN"
+export async function jsonParser(response: Response): Promise<
+  Result<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any,
+    WebCourierError<ParserErrorCode | "INVALID_JSON" | "UNKNOWN">
   >
->;
-
-export async function jsonParser(
-  response: Response
-): Promise<JSONParserResult> {
+> {
   if (response.bodyUsed) {
     const typeError = new TypeError(
       "Failed to execute 'json' on 'Response': body stream already read"
