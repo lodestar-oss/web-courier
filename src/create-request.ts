@@ -1,21 +1,18 @@
 import type { Result } from "@/types/result";
 
+import { type CreateURLErrorCode, createURL } from "@/create-url";
 import { WebCourierError } from "@/utils/errors/classes";
 import { hasCredentials } from "@/utils/has-credentials";
-import { createURL } from "@/create-url";
+
+export type CreateRequestErrorCode =
+  | "INVALID_REQUEST_INIT_OPTIONS"
+  | "REQUEST_URL_HAS_CREDENTIALS"
+  | CreateURLErrorCode;
 
 export function createRequest(
   input: RequestInfo | URL,
   init?: RequestInit
-): Result<
-  Request,
-  WebCourierError<
-    | "INVALID_REQUEST_INIT_OPTIONS"
-    | "REQUEST_URL_HAS_CREDENTIALS"
-    | "INVALID_URL"
-    | "UNKNOWN"
-  >
-> {
+): Result<Request, WebCourierError<CreateRequestErrorCode>> {
   try {
     if (input instanceof Request) {
       const request = new Request(input, init);
