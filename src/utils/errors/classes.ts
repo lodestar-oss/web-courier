@@ -4,6 +4,7 @@ export type WebCourierErrorCode =
   | "BODY_STREAM_WAS_READ"
   | "DECODING_ERROR"
   | "NETWORK_ERROR"
+  | "INVALID_JSON"
   | "INVALID_URL"
   | "ABORTED"
   | "TIMEOUT"

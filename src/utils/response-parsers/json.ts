@@ -1,18 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import type { Result } from "@/types/result";
 
 import { WebCourierError } from "@/utils/errors/classes";
 
-export async function blobParser(
-  response: Response
-): Promise<
+export async function jsonParser(response: Response): Promise<
   Result<
-    Blob,
-    WebCourierError<"BODY_STREAM_WAS_READ" | "DECODING_ERROR" | "UNKNOWN">
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any,
+    WebCourierError<
+      "BODY_STREAM_WAS_READ" | "DECODING_ERROR" | "INVALID_JSON" | "UNKNOWN"
+    >
   >
 > {
   if (response.bodyUsed) {
     const typeError = new TypeError(
-      "Failed to execute 'blob' on 'Response': body stream already read"
+      "Failed to execute 'json' on 'Response': body stream already read"
     );
     const bodyStreamWasReadError = new WebCourierError(
       "The response body is disturbed or locked.",
@@ -25,8 +28,8 @@ export async function blobParser(
   }
 
   try {
-    const blob = await response.blob();
-    return { success: true, data: blob };
+    const json = await response.json();
+    return { success: true, data: json };
   } catch (error) {
     if (error instanceof TypeError) {
       const decodingError = new WebCourierError(
@@ -37,6 +40,17 @@ export async function blobParser(
         }
       );
       return { error: decodingError, success: false };
+    }
+
+    if (error instanceof SyntaxError) {
+      const invalidJsonError = new WebCourierError(
+        "The response body cannot be parsed as JSON",
+        {
+          code: "INVALID_JSON",
+          cause: error,
+        }
+      );
+      return { error: invalidJsonError, success: false };
     }
 
     const unknownError = new WebCourierError("Unknown error", {
