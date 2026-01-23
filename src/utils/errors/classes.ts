@@ -6,9 +6,16 @@ export type WebCourierErrorCode =
   | "NETWORK_ERROR"
   | "INVALID_JSON"
   | "INVALID_URL"
+  | "HTTP_ERROR"
   | "ABORTED"
   | "TIMEOUT"
   | "UNKNOWN";
+
+export interface WebCourierHTTPErrorOptions extends WebCourierErrorOptions<"HTTP_ERROR"> {
+  code: "HTTP_ERROR";
+  statusText: string;
+  status: number;
+}
 
 export interface WebCourierErrorOptions<
   TCode extends WebCourierErrorCode,
@@ -18,8 +25,20 @@ export interface WebCourierErrorOptions<
 
 export class WebCourierError<TCode extends WebCourierErrorCode> extends Error {
   code: TCode;
+
   constructor(message: string, options: WebCourierErrorOptions<TCode>) {
     super(message, { cause: options.cause });
     this.code = options.code;
+  }
+}
+
+export class WebCourierHTTPError extends WebCourierError<"HTTP_ERROR"> {
+  statusText: string;
+  status: number;
+
+  constructor(message: string, options: WebCourierHTTPErrorOptions) {
+    super(message, options);
+    this.statusText = options.statusText;
+    this.status = options.status;
   }
 }
