@@ -26,13 +26,13 @@ export async function getResponse({
     >
   >
 > {
-  const createRequestResult = createRequest(input, init);
+  const createRequestResult = createRequest({ input, init });
   if (!createRequestResult.success) {
     return createRequestResult;
   }
   const request = createRequestResult.data;
 
-  const fetchResult = await webFetch(request);
+  const fetchResult = await webFetch({ input: request });
   if (!fetchResult.success) {
     return fetchResult;
   }

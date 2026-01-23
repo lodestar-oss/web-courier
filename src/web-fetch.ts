@@ -9,11 +9,14 @@ export type WebFetchErrorCode =
   | "ABORTED"
   | "TIMEOUT";
 
-export async function webFetch(
-  input: RequestInfo | URL,
-  init?: RequestInit
-): Promise<Result<Response, WebCourierError<WebFetchErrorCode>>> {
-  const createRequestResult = createRequest(input, init);
+export async function webFetch({
+  input,
+  init,
+}: {
+  input: RequestInfo | URL;
+  init?: RequestInit;
+}): Promise<Result<Response, WebCourierError<WebFetchErrorCode>>> {
+  const createRequestResult = createRequest({ input, init });
   if (!createRequestResult.success) {
     return createRequestResult;
   }

@@ -9,17 +9,20 @@ export type CreateRequestErrorCode =
   | "REQUEST_URL_HAS_CREDENTIALS"
   | CreateURLErrorCode;
 
-export function createRequest(
-  input: RequestInfo | URL,
-  init?: RequestInit
-): Result<Request, WebCourierError<CreateRequestErrorCode>> {
+export function createRequest({
+  input,
+  init,
+}: {
+  input: RequestInfo | URL;
+  init?: RequestInit;
+}): Result<Request, WebCourierError<CreateRequestErrorCode>> {
   try {
     if (input instanceof Request) {
       const request = new Request(input, init);
       return { success: true, data: request };
     }
 
-    const createURLResult = createURL(input);
+    const createURLResult = createURL({ url: input });
     if (!createURLResult.success) {
       return createURLResult;
     }

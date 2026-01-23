@@ -4,10 +4,13 @@ import { WebCourierError } from "@/utils/errors/classes";
 
 export type CreateURLErrorCode = "INVALID_URL" | "UNKNOWN";
 
-export function createURL(
-  url: string | URL,
-  base?: string | URL
-): Result<URL, WebCourierError<CreateURLErrorCode>> {
+export function createURL({
+  base,
+  url,
+}: {
+  base?: string | URL;
+  url: string | URL;
+}): Result<URL, WebCourierError<CreateURLErrorCode>> {
   try {
     const urlObj = new URL(url, base);
     return { success: true, data: urlObj };
