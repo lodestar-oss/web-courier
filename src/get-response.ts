@@ -1,7 +1,13 @@
+import type { WebCourierError } from "@/utils/errors/classes";
+import type { Result } from "@/types/result";
+
+import {
+  type ParseResponseBodyErrorCode,
+  parseResponseBody,
+} from "@/parse-response-body";
+import { type WebFetchErrorCode, webFetch } from "@/web-fetch";
 import { WebCourierHTTPError } from "@/utils/errors/classes";
-import { parseResponseBody } from "@/parse-response-body";
 import { createRequest } from "@/create-request";
-import { webFetch } from "@/web-fetch";
 
 export async function getResponse({
   format,
@@ -11,7 +17,15 @@ export async function getResponse({
   format?: "json" | "blob";
   input: RequestInfo | URL;
   init?: RequestInit;
-}) {
+}): Promise<
+  Result<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any,
+    WebCourierError<
+      ParseResponseBodyErrorCode | WebFetchErrorCode | "HTTP_ERROR"
+    >
+  >
+> {
   const createRequestResult = createRequest(input, init);
   if (!createRequestResult.success) {
     return createRequestResult;

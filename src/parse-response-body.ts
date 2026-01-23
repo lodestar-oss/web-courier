@@ -4,6 +4,11 @@ import type { Result } from "@/types/result";
 import { jsonParser } from "@/utils/response-parsers/json";
 import { blobParser } from "@/utils/response-parsers/blob";
 
+export type ParseResponseBodyErrorCode =
+  | ParserErrorCode
+  | "INVALID_JSON"
+  | "UNKNOWN";
+
 export async function parseResponseBody({
   format = "json",
   response,
@@ -14,7 +19,7 @@ export async function parseResponseBody({
   Result<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,
-    WebCourierError<ParserErrorCode | "INVALID_JSON" | "UNKNOWN">
+    WebCourierError<ParseResponseBodyErrorCode>
   >
 > {
   switch (format) {
